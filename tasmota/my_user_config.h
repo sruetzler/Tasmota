@@ -383,15 +383,15 @@
 #define MQTT_CLEAN_SESSION     1                 // Mqtt clean session connection (0 = No clean session, 1 = Clean session (default))
 
 // -- MQTT - Domoticz -----------------------------
-#define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
-  #define DOMOTICZ_IN_TOPIC    "domoticz/in"     // Domoticz Input Topic
-  #define DOMOTICZ_OUT_TOPIC   "domoticz/out"    // Domoticz Output Topic
+// #define USE_DOMOTICZ                             // Enable Domoticz (+6k code, +0.3k mem)
+//   #define DOMOTICZ_IN_TOPIC    "domoticz/in"     // Domoticz Input Topic
+//   #define DOMOTICZ_OUT_TOPIC   "domoticz/out"    // Domoticz Output Topic
 
 // -- MQTT - Home Assistant Discovery -------------
-#define USE_HOME_ASSISTANT                                   // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
-  #define HOME_ASSISTANT_DISCOVERY_PREFIX   "homeassistant"  // Home Assistant discovery prefix
-  #define HOME_ASSISTANT_LWT_TOPIC   "homeassistant/status"  // home Assistant Birth and Last Will Topic (default = homeassistant/status)
-  #define HOME_ASSISTANT_LWT_SUBSCRIBE    true               // Subscribe to Home Assistant Birth and Last Will Topic (default = true)
+// #define USE_HOME_ASSISTANT                                   // Enable Home Assistant Discovery Support (+4.1k code, +6 bytes mem)
+//   #define HOME_ASSISTANT_DISCOVERY_PREFIX   "homeassistant"  // Home Assistant discovery prefix
+//   #define HOME_ASSISTANT_LWT_TOPIC   "homeassistant/status"  // home Assistant Birth and Last Will Topic (default = homeassistant/status)
+//   #define HOME_ASSISTANT_LWT_SUBSCRIBE    true               // Subscribe to Home Assistant Birth and Last Will Topic (default = true)
 
 // -- MQTT - TLS - AWS IoT ------------------------
 // Using TLS starting with version v6.5.0.16 compilation will only work using Core 2.4.2 and 2.5.2. No longer supported: 2.3.0
@@ -410,12 +410,12 @@
 
 // -- Telegram Protocol ---------------------------
 //#define USE_TELEGRAM                             // Support for Telegram protocol (+49k code, +7.0k mem and +4.8k additional during connection handshake)
-  #define USE_TELEGRAM_FINGERPRINT "\xB2\x72\x47\xA6\x69\x8C\x3C\x69\xF9\x58\x6C\xF3\x60\x02\xFB\x83\xFA\x8B\x1F\x23" // Telegram api.telegram.org TLS public key fingerpring
+//  #define USE_TELEGRAM_FINGERPRINT "\xB2\x72\x47\xA6\x69\x8C\x3C\x69\xF9\x58\x6C\xF3\x60\x02\xFB\x83\xFA\x8B\x1F\x23" // Telegram api.telegram.org TLS public key fingerpring
 //  #define USE_MQTT_TLS_CA_CERT                   // Use certificate instead of fingerprint
 
 // -- KNX IP Protocol -----------------------------
 //#define USE_KNX                                  // Enable KNX IP Protocol Support (+9.4k code, +3k7 mem)
-  #define USE_KNX_WEB_MENU                       // Enable KNX WEB MENU (+8.3k code, +144 mem)
+//  #define USE_KNX_WEB_MENU                       // Enable KNX WEB MENU (+8.3k code, +144 mem)
 
 // -- HTTP ----------------------------------------
 #define USE_WEBSERVER                            // Enable web server and Wifi Manager (+66k code, +8k mem)
@@ -434,10 +434,10 @@
   #define MQTT_HOST_DISCOVERY                    // Find MQTT host server (overrides MQTT_HOST if found)
 
 // -- Time ----------------------------------------
-#define USE_TIMERS                               // Add support for up to 16 timers (+2k2 code)
-  #define USE_TIMERS_WEB                         // Add timer webpage support (+4k5 code)
-  #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
-    #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
+// #define USE_TIMERS                               // Add support for up to 16 timers (+2k2 code)
+//   #define USE_TIMERS_WEB                         // Add timer webpage support (+4k5 code)
+//   #define USE_SUNRISE                            // Add support for Sunrise and sunset tools (+16k)
+//     #define SUNRISE_DAWN_ANGLE DAWN_NORMAL       // Select desired Dawn Angle from (DAWN_NORMAL, DAWN_CIVIL, DAWN_NAUTIC, DAWN_ASTRONOMIC)
 
 // -- Ping ----------------------------------------
 //  #define USE_PING                                 // Enable Ping command (+2k code)
@@ -447,7 +447,7 @@
 
 // -- Rules or Script  ----------------------------
 // Select none or only one of the below defines USE_RULES or USE_SCRIPT
-#define USE_RULES                                // Add support for rules (+8k code)
+//#define USE_RULES                                // Add support for rules (+8k code)
 //  #define USE_EXPRESSION                         // Add support for expression evaluation in rules (+3k2 code, +64 bytes mem)
 //    #define SUPPORT_IF_STATEMENT                 // Add support for IF statement in rules (+4k2 code, -332 bytes mem)
 
@@ -457,64 +457,64 @@
 //  #define SUPPORT_MQTT_EVENT                     // Support trigger event with MQTT subscriptions (+3k5 code)
 
 // -- Optional modules ----------------------------
-#define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
-  #define ROTARY_MAX_STEPS     10                // Rotary step boundary
-#define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge (+3k2 code)
-  #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+2k7 code)
-#define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
-#define USE_TUYA_MCU                             // Add support for Tuya Serial MCU
-  #define TUYA_DIMMER_ID       0                 // Default dimmer Id
+// #define ROTARY_V1                                // Add support for Rotary Encoder as used in MI Desk Lamp (+0k8 code)
+//   #define ROTARY_MAX_STEPS     10                // Rotary step boundary
+// #define USE_SONOFF_RF                            // Add support for Sonoff Rf Bridge (+3k2 code)
+//   #define USE_RF_FLASH                           // Add support for flashing the EFM8BB1 chip on the Sonoff RF Bridge. C2CK must be connected to GPIO4, C2D to GPIO5 on the PCB (+2k7 code)
+// #define USE_SONOFF_SC                            // Add support for Sonoff Sc (+1k1 code)
+// #define USE_TUYA_MCU                             // Add support for Tuya Serial MCU
+//   #define TUYA_DIMMER_ID       0                 // Default dimmer Id
 //  #define USE_TUYA_TIME                          // Add support for Set Time in Tuya MCU
-#define USE_ARMTRONIX_DIMMERS                    // Add support for Armtronix Dimmers (+1k4 code)
-#define USE_PS_16_DZ                             // Add support for PS-16-DZ Dimmer (+2k code)
-#define USE_SONOFF_IFAN                          // Add support for Sonoff iFan02 and iFan03 (+2k code)
-#define USE_BUZZER                               // Add support for a buzzer (+0k6 code)
-#define USE_ARILUX_RF                            // Add support for Arilux RF remote controller (+0k8 code, 252 iram (non 2.3.0))
-#define USE_SHUTTER                              // Add Shutter support for up to 4 shutter with different motortypes (+11k code)
-#define USE_DEEPSLEEP                            // Add support for deepsleep (+1k code)
-#define USE_EXS_DIMMER                           // Add support for ES-Store WiFi Dimmer (+1k5 code)
-//  #define EXS_MCU_CMNDS                          // Add command to send MCU commands (+0k8 code)
-//#define USE_HOTPLUG                              // Add support for sensor HotPlug
-#define USE_DEVICE_GROUPS                        // Add support for device groups (+5k5 code)
-  #define DEVICE_GROUPS_ADDRESS 239,255,250,250  // Device groups multicast address
-  #define DEVICE_GROUPS_PORT 4447                // Device groups multicast port
-  #define USE_DEVICE_GROUPS_SEND                 // Add support for the DevGroupSend command (+0k6 code)
-#define USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+2k3 code, DGR=0k7)
-  #define USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer (requires USE_DEVICE_GROUPS) (+0k6 code)
-//#define USE_KEELOQ                               // Add support for Jarolift rollers by Keeloq algorithm (+4k5 code)
-#define USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer (+0k7 code)
-#define USE_SHELLY_DIMMER                        // Add support for Shelly Dimmer (+3k code)
-  #define SHELLY_CMDS                            // Add command to send co-processor commands (+0k3 code)
-  #define SHELLY_FW_UPGRADE                      // Add firmware upgrade option for co-processor (+3k4 code)
-//  #define SHELLY_VOLTAGE_MON                     // Add support for reading voltage and current measurment (-0k0 code)
+// #define USE_ARMTRONIX_DIMMERS                    // Add support for Armtronix Dimmers (+1k4 code)
+// #define USE_PS_16_DZ                             // Add support for PS-16-DZ Dimmer (+2k code)
+// #define USE_SONOFF_IFAN                          // Add support for Sonoff iFan02 and iFan03 (+2k code)
+// #define USE_BUZZER                               // Add support for a buzzer (+0k6 code)
+// #define USE_ARILUX_RF                            // Add support for Arilux RF remote controller (+0k8 code, 252 iram (non 2.3.0))
+// #define USE_SHUTTER                              // Add Shutter support for up to 4 shutter with different motortypes (+11k code)
+// #define USE_DEEPSLEEP                            // Add support for deepsleep (+1k code)
+// #define USE_EXS_DIMMER                           // Add support for ES-Store WiFi Dimmer (+1k5 code)
+// //  #define EXS_MCU_CMNDS                          // Add command to send MCU commands (+0k8 code)
+// //#define USE_HOTPLUG                              // Add support for sensor HotPlug
+// #define USE_DEVICE_GROUPS                        // Add support for device groups (+5k5 code)
+//   #define DEVICE_GROUPS_ADDRESS 239,255,250,250  // Device groups multicast address
+//   #define DEVICE_GROUPS_PORT 4447                // Device groups multicast port
+//   #define USE_DEVICE_GROUPS_SEND                 // Add support for the DevGroupSend command (+0k6 code)
+// #define USE_PWM_DIMMER                           // Add support for MJ-SD01/acenx/NTONPOWER PWM dimmers (+2k3 code, DGR=0k7)
+//   #define USE_PWM_DIMMER_REMOTE                  // Add support for remote switches to PWM Dimmer (requires USE_DEVICE_GROUPS) (+0k6 code)
+// //#define USE_KEELOQ                               // Add support for Jarolift rollers by Keeloq algorithm (+4k5 code)
+// #define USE_SONOFF_D1                            // Add support for Sonoff D1 Dimmer (+0k7 code)
+// #define USE_SHELLY_DIMMER                        // Add support for Shelly Dimmer (+3k code)
+//   #define SHELLY_CMDS                            // Add command to send co-processor commands (+0k3 code)
+//   #define SHELLY_FW_UPGRADE                      // Add firmware upgrade option for co-processor (+3k4 code)
+// //  #define SHELLY_VOLTAGE_MON                     // Add support for reading voltage and current measurment (-0k0 code)
 
-// -- Optional light modules ----------------------
-#define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
-//  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
-//  #define USE_WS2812_INVERTED                    // Use inverted data signal
-  #define USE_WS2812_HARDWARE  NEO_HW_WS2812     // Hardware type (NEO_HW_WS2812, NEO_HW_WS2812X, NEO_HW_WS2813, NEO_HW_SK6812, NEO_HW_LC8812, NEO_HW_APA106, NEO_HW_P9813)
-  #define USE_WS2812_CTYPE     NEO_GRB           // Color type (NEO_RGB, NEO_GRB, NEO_BRG, NEO_RBG, NEO_RGBW, NEO_GRBW)
-#define USE_MY92X1                               // Add support for MY92X1 RGBCW led controller as used in Sonoff B1, Ailight and Lohas
-#define USE_SM16716                              // Add support for SM16716 RGB LED controller (+0k7 code)
-#define USE_SM2135                               // Add support for SM2135 RGBCW led control as used in Action LSC (+0k6 code)
-#define USE_SONOFF_L1                            // Add support for Sonoff L1 led control
-#define USE_ELECTRIQ_MOODL                       // Add support for ElectriQ iQ-wifiMOODL RGBW LED controller (+0k3 code)
-#define USE_LIGHT_PALETTE                        // Add support for color palette (+0k7 code)
-#define USE_LIGHT_VIRTUAL_CT                     // Add support for Virtual White Color Temperature (+1.1k code)
-#define USE_DGR_LIGHT_SEQUENCE                   // Add support for device group light sequencing (requires USE_DEVICE_GROUPS) (+0k2 code)
+// // -- Optional light modules ----------------------
+// #define USE_WS2812                               // WS2812 Led string using library NeoPixelBus (+5k code, +1k mem, 232 iram) - Disable by //
+// //  #define USE_WS2812_DMA                         // DMA supports only GPIO03 (= Serial RXD) (+1k mem). When USE_WS2812_DMA is enabled expect Exceptions on Pow
+// //  #define USE_WS2812_INVERTED                    // Use inverted data signal
+//   #define USE_WS2812_HARDWARE  NEO_HW_WS2812     // Hardware type (NEO_HW_WS2812, NEO_HW_WS2812X, NEO_HW_WS2813, NEO_HW_SK6812, NEO_HW_LC8812, NEO_HW_APA106, NEO_HW_P9813)
+//   #define USE_WS2812_CTYPE     NEO_GRB           // Color type (NEO_RGB, NEO_GRB, NEO_BRG, NEO_RBG, NEO_RGBW, NEO_GRBW)
+// #define USE_MY92X1                               // Add support for MY92X1 RGBCW led controller as used in Sonoff B1, Ailight and Lohas
+// #define USE_SM16716                              // Add support for SM16716 RGB LED controller (+0k7 code)
+// #define USE_SM2135                               // Add support for SM2135 RGBCW led control as used in Action LSC (+0k6 code)
+// #define USE_SONOFF_L1                            // Add support for Sonoff L1 led control
+// #define USE_ELECTRIQ_MOODL                       // Add support for ElectriQ iQ-wifiMOODL RGBW LED controller (+0k3 code)
+// #define USE_LIGHT_PALETTE                        // Add support for color palette (+0k7 code)
+// #define USE_LIGHT_VIRTUAL_CT                     // Add support for Virtual White Color Temperature (+1.1k code)
+// #define USE_DGR_LIGHT_SEQUENCE                   // Add support for device group light sequencing (requires USE_DEVICE_GROUPS) (+0k2 code)
 
 // -- Counter input -------------------------------
-#define USE_COUNTER                              // Enable inputs as counter (+0k8 code)
+//#define USE_COUNTER                              // Enable inputs as counter (+0k8 code)
 
 // -- Internal Analog input -----------------------
 //#define USE_ADC_VCC                              // Display Vcc in Power status. Disable for use as Analog input on selected devices
 
 // -- One wire sensors ----------------------------
-#define USE_DS18x20                              // Add support for DS18x20 sensors with id sort, single scan and read retry (+2k6 code)
+//#define USE_DS18x20                              // Add support for DS18x20 sensors with id sort, single scan and read retry (+2k6 code)
 //  #define W1_PARASITE_POWER                      // Optimize for parasite powered sensors
 
 // -- I2C sensors ---------------------------------
-#define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
+//#define USE_I2C                                  // I2C using library wire (+10k code, 0k2 mem, 124 iram)
 
 #ifdef USE_I2C
 //  #define USE_SHT                                // [I2cDriver8] Enable SHT1X sensor (+1k4 code)
@@ -735,52 +735,52 @@
 // You can reduce this size by disabling some protocols in "lib/IRremoteESP8266.x.x.x/src/IRremoteESP8266.h"
 
 // -- IR Remote features - subset of IR protocols --------------------------
-#define USE_IR_REMOTE                            // Send IR remote commands using library IRremoteESP8266 and ArduinoJson (+4k3 code, 0k3 mem, 48 iram)
-  #define IR_SEND_INVERTED          false        // Invert the output. (default = false) e.g. LED is illuminated when GPIO is LOW rather than HIGH.
-                                                 // Setting inverted to something other than the default could easily destroy your IR LED if you are overdriving it.
-                                                 // Unless you REALLY know what you are doing, don't change this.
-  #define IR_SEND_USE_MODULATION    true         // Do we do frequency modulation during transmission? i.e. If not, assume a 100% duty cycle.
-  #define USE_IR_SEND_NEC                        // Support IRsend NEC protocol
-  #define USE_IR_SEND_RC5                        // Support IRsend Philips RC5 protocol
-  #define USE_IR_SEND_RC6                        // Support IRsend Philips RC6 protocol
+// #define USE_IR_REMOTE                            // Send IR remote commands using library IRremoteESP8266 and ArduinoJson (+4k3 code, 0k3 mem, 48 iram)
+//   #define IR_SEND_INVERTED          false        // Invert the output. (default = false) e.g. LED is illuminated when GPIO is LOW rather than HIGH.
+//                                                  // Setting inverted to something other than the default could easily destroy your IR LED if you are overdriving it.
+//                                                  // Unless you REALLY know what you are doing, don't change this.
+//   #define IR_SEND_USE_MODULATION    true         // Do we do frequency modulation during transmission? i.e. If not, assume a 100% duty cycle.
+//   #define USE_IR_SEND_NEC                        // Support IRsend NEC protocol
+//   #define USE_IR_SEND_RC5                        // Support IRsend Philips RC5 protocol
+//   #define USE_IR_SEND_RC6                        // Support IRsend Philips RC6 protocol
 
-  #define USE_IR_RECEIVE                         // Support for IR receiver (+7k2 code, 264 iram)
-    #define IR_RCV_BUFFER_SIZE      100          // Max number of packets allowed in capture buffer (default 100 (*2 bytes ram))
-    #define IR_RCV_TIMEOUT          15           // Number of milli-Seconds of no-more-data before we consider a message ended (default 15)
-    #define IR_RCV_MIN_UNKNOWN_SIZE 6            // Set the smallest sized "UNKNOWN" message packets we actually care about (default 6, max 255)
-    #define IR_RCV_WHILE_SENDING    0            // Turns on receiver while sending messages, i.e. receive your own. This is unreliable and can cause IR timing issues
+//   #define USE_IR_RECEIVE                         // Support for IR receiver (+7k2 code, 264 iram)
+//     #define IR_RCV_BUFFER_SIZE      100          // Max number of packets allowed in capture buffer (default 100 (*2 bytes ram))
+//     #define IR_RCV_TIMEOUT          15           // Number of milli-Seconds of no-more-data before we consider a message ended (default 15)
+//     #define IR_RCV_MIN_UNKNOWN_SIZE 6            // Set the smallest sized "UNKNOWN" message packets we actually care about (default 6, max 255)
+//     #define IR_RCV_WHILE_SENDING    0            // Turns on receiver while sending messages, i.e. receive your own. This is unreliable and can cause IR timing issues
 
-// -- Zigbee interface ----------------------------
-//#define USE_ZIGBEE                                // Enable serial communication with Zigbee CC2530 flashed with ZNP (+49k code, +3k mem)
-  #define USE_ZIGBEE_ZNP                         // Enable ZNP protocol, needed for CC2530 based devices
-//  #define USE_ZIGBEE_EZSP                        // Enable EZSP protocol, needed for EFR32 EmberZNet based devices, like Sonoff Zigbee bridge
-                                                 // Note: USE_ZIGBEE_ZNP and USE_ZIGBEE_EZSP are mutually incompatible, you must select exactly one
-  #define USE_ZIGBEE_CHANNEL  11                 // Zigbee Channel (11-26)
-  #define USE_ZIGBEE_TXRADIO_DBM  20             // Tx Radio power in dBm (only for EZSP, EFR32 can go up to 20 dBm)
+// // -- Zigbee interface ----------------------------
+// //#define USE_ZIGBEE                                // Enable serial communication with Zigbee CC2530 flashed with ZNP (+49k code, +3k mem)
+//   #define USE_ZIGBEE_ZNP                         // Enable ZNP protocol, needed for CC2530 based devices
+// //  #define USE_ZIGBEE_EZSP                        // Enable EZSP protocol, needed for EFR32 EmberZNet based devices, like Sonoff Zigbee bridge
+//                                                  // Note: USE_ZIGBEE_ZNP and USE_ZIGBEE_EZSP are mutually incompatible, you must select exactly one
+//   #define USE_ZIGBEE_CHANNEL  11                 // Zigbee Channel (11-26)
+//   #define USE_ZIGBEE_TXRADIO_DBM  20             // Tx Radio power in dBm (only for EZSP, EFR32 can go up to 20 dBm)
 
-  #define USE_ZIGBEE_COALESCE_ATTR_TIMER 350     // timer to coalesce attribute values (in ms)
-  #define USE_ZIGBEE_DEBOUNCE_COMMANDS   200     // if commands are received from the same device/endpoint with same ZCL transaction number, discard packet in this time window (ms)
-  #define USE_ZIGBEE_MODELID      "Tasmota Z2T"  // reported "ModelId"      (cluster 0000 / attribute 0005)
-  #define USE_ZIGBEE_MANUFACTURER "Tasmota"      // reported "Manufacturer" (cluster 0000 / attribute 0004)
-  #define USE_ZBBRIDGE_TLS                       // TLS support for zbbridge
-  #define USE_ZIGBEE_ZBBRIDGE_EEPROM 0x50        // I2C id for the ZBBridge EEPROM
+//   #define USE_ZIGBEE_COALESCE_ATTR_TIMER 350     // timer to coalesce attribute values (in ms)
+//   #define USE_ZIGBEE_DEBOUNCE_COMMANDS   200     // if commands are received from the same device/endpoint with same ZCL transaction number, discard packet in this time window (ms)
+//   #define USE_ZIGBEE_MODELID      "Tasmota Z2T"  // reported "ModelId"      (cluster 0000 / attribute 0005)
+//   #define USE_ZIGBEE_MANUFACTURER "Tasmota"      // reported "Manufacturer" (cluster 0000 / attribute 0004)
+//   #define USE_ZBBRIDGE_TLS                       // TLS support for zbbridge
+//   #define USE_ZIGBEE_ZBBRIDGE_EEPROM 0x50        // I2C id for the ZBBridge EEPROM
 
-  // Auto-binding constants, see `Z_autoAttributeReporting`
-  // Below are the threshold for attribute reporting
-  #define USE_ZIGBEE_AUTOBIND_BATTVOLTAGE   0.2     // V
-  #define USE_ZIGBEE_AUTOBIND_BATTPERCENT   5       // %
-  #define USE_ZIGBEE_AUTOBIND_TEMPERATURE   0.5     // °C
-  #define USE_ZIGBEE_AUTOBIND_HEATDEMAND    10      // %
-  #define USE_ZIGBEE_AUTOBIND_PRESSURE      1       // hPA
-  #define USE_ZIGBEE_AUTOBIND_ILLUMINANCE   5       // lux
-  #define USE_ZIGBEE_AUTOBIND_HUMIDITY      1.0     // %
-  #define USE_ZIGBEE_AUTOBIND_LIFT          1.0     // %
-  // Below are the Max Thresholds for reporting time (in seconds)
-  #define USE_ZIGBEE_MAXTIME_BATT           4*60*60   // 4h
-  #define USE_ZIGBEE_MAXTIME_TRV            60*10     // 10m
-  #define USE_ZIGBEE_MAXTIME_SENSOR         60*60     // 1h
-  #define USE_ZIGBEE_MAXTIME_LIGHT          60*60     // 1h
-  #define USE_ZIGBEE_MAXTIME_LIFT           4*60*60   // 4h
+//   // Auto-binding constants, see `Z_autoAttributeReporting`
+//   // Below are the threshold for attribute reporting
+//   #define USE_ZIGBEE_AUTOBIND_BATTVOLTAGE   0.2     // V
+//   #define USE_ZIGBEE_AUTOBIND_BATTPERCENT   5       // %
+//   #define USE_ZIGBEE_AUTOBIND_TEMPERATURE   0.5     // °C
+//   #define USE_ZIGBEE_AUTOBIND_HEATDEMAND    10      // %
+//   #define USE_ZIGBEE_AUTOBIND_PRESSURE      1       // hPA
+//   #define USE_ZIGBEE_AUTOBIND_ILLUMINANCE   5       // lux
+//   #define USE_ZIGBEE_AUTOBIND_HUMIDITY      1.0     // %
+//   #define USE_ZIGBEE_AUTOBIND_LIFT          1.0     // %
+//   // Below are the Max Thresholds for reporting time (in seconds)
+//   #define USE_ZIGBEE_MAXTIME_BATT           4*60*60   // 4h
+//   #define USE_ZIGBEE_MAXTIME_TRV            60*10     // 10m
+//   #define USE_ZIGBEE_MAXTIME_SENSOR         60*60     // 1h
+//   #define USE_ZIGBEE_MAXTIME_LIGHT          60*60     // 1h
+//   #define USE_ZIGBEE_MAXTIME_LIFT           4*60*60   // 4h
 
 // -- Other sensors/drivers -----------------------
 
