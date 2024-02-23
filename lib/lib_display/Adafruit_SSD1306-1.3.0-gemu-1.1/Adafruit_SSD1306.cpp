@@ -326,9 +326,9 @@ Adafruit_SSD1306::Adafruit_SSD1306(int8_t rst_pin) :
     @brief  Destructor for Adafruit_SSD1306 object.
 */
 Adafruit_SSD1306::~Adafruit_SSD1306(void) {
-  if(buffer) {
-    free(buffer);
-    buffer = NULL;
+  if (framebuffer) {
+    free (framebuffer);
+    framebuffer = NULL;
   }
 }
 
@@ -451,8 +451,8 @@ void Adafruit_SSD1306::ssd1306_command(uint8_t c) {
 boolean Adafruit_SSD1306::begin(uint8_t vcs, uint8_t addr, boolean reset,
   boolean periphBegin) {
 
-//  if((!buffer) && !(buffer = (uint8_t *)malloc(WIDTH * ((HEIGHT + 7) / 8))))
-//    return false;
+  framebuffer = (uint8_t *)malloc(WIDTH * ((HEIGHT + 7) / 8));
+  if (!framebuffer)  return false;
 
   clearDisplay();
 
@@ -570,6 +570,13 @@ boolean Adafruit_SSD1306::begin(uint8_t vcs, uint8_t addr, boolean reset,
       SSD1306_SETCONTRAST };              // 0x81
     ssd1306_commandList(init4d, sizeof(init4d));
     ssd1306_command1((vccstate == SSD1306_EXTERNALVCC) ? 0x9F : 0xCF);
+  } else if((WIDTH == 72) && (HEIGHT == 40)) {
+    static const uint8_t PROGMEM init4d[] = {
+      SSD1306_SETCOMPINS,                 // 0xDA
+      0x12,
+      SSD1306_SETCONTRAST };              // 0x81
+    ssd1306_commandList(init4d, sizeof(init4d));
+    ssd1306_command1((vccstate == SSD1306_EXTERNALVCC) ? 0x9F : 0xCF);
   } else {
     // Other screen varieties -- TBD
   }
@@ -604,6 +611,8 @@ void Adafruit_SSD1306::DisplayInit(int8_t p,int8_t size,int8_t rot,int8_t font) 
     setCursor(0,0);
     fillScreen(BLACK);
     Updateframe();
+
+    disp_bpp = -1;
   //}
 }
 
@@ -627,6 +636,10 @@ void Adafruit_SSD1306::DisplayInit(int8_t p,int8_t size,int8_t rot,int8_t font) 
             commands as needed by one's own application.
 */
 void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color) {
+
+  if (!framebuffer) return;
+
+
   if((x >= 0) && (x < width()) && (y >= 0) && (y < height())) {
     // Pixel is in-bounds. Rotate coordinates if needed.
     switch(getRotation()) {
@@ -644,9 +657,9 @@ void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color) {
       break;
     }
     switch(color) {
-     case WHITE:   buffer[x + (y/8)*WIDTH] |=  (1 << (y&7)); break;
-     case BLACK:   buffer[x + (y/8)*WIDTH] &= ~(1 << (y&7)); break;
-     case INVERSE: buffer[x + (y/8)*WIDTH] ^=  (1 << (y&7)); break;
+     case WHITE:   framebuffer[x + (y/8)*WIDTH] |=  (1 << (y&7)); break;
+     case BLACK:   framebuffer[x + (y/8)*WIDTH] &= ~(1 << (y&7)); break;
+     case INVERSE: framebuffer[x + (y/8)*WIDTH] ^=  (1 << (y&7)); break;
     }
   }
 }
@@ -659,7 +672,8 @@ void Adafruit_SSD1306::drawPixel(int16_t x, int16_t y, uint16_t color) {
             commands as needed by one's own application.
 */
 void Adafruit_SSD1306::clearDisplay(void) {
-  memset(buffer, 0, WIDTH * ((HEIGHT + 7) / 8));
+  if (!framebuffer) return;
+  memset(framebuffer, 0, WIDTH * ((HEIGHT + 7) / 8));
 }
 
 /*!
@@ -757,9 +771,9 @@ void Adafruit_SSD1306::drawFastVLine(
 }
 #endif
 
-void Adafruit_SSD1306::drawFastHLineInternal(
+void Adafruit_SSD1306::drawFastHLineInternal (
   int16_t x, int16_t y, int16_t w, uint16_t color) {
-
+  if (!framebuffer) return;
   if((y >= 0) && (y < HEIGHT)) { // Y coord in bounds?
     if(x < 0) { // Clip left
       w += x;
@@ -769,7 +783,7 @@ void Adafruit_SSD1306::drawFastHLineInternal(
       w = (WIDTH - x);
     }
     if(w > 0) { // Proceed only if width is positive
-      uint8_t *pBuf = &buffer[(y / 8) * WIDTH + x],
+      uint8_t *pBuf = &framebuffer[(y / 8) * WIDTH + x],
                mask = 1 << (y & 7);
       switch(color) {
        case WHITE:               while(w--) { *pBuf++ |= mask; }; break;
@@ -782,7 +796,7 @@ void Adafruit_SSD1306::drawFastHLineInternal(
 
 void Adafruit_SSD1306::drawFastVLineInternal(
   int16_t x, int16_t __y, int16_t __h, uint16_t color) {
-
+if (!framebuffer) return;
   if((x >= 0) && (x < WIDTH)) { // X coord in bounds?
     if(__y < 0) { // Clip top
       __h += __y;
@@ -795,7 +809,7 @@ void Adafruit_SSD1306::drawFastVLineInternal(
       // this display doesn't need ints for coordinates,
       // use local byte registers for faster juggling
       uint8_t  y = __y, h = __h;
-      uint8_t *pBuf = &buffer[(y / 8) * WIDTH + x];
+      uint8_t *pBuf = &framebuffer[(y / 8) * WIDTH + x];
 
       // do the first partial byte, if necessary - this requires some masking
       uint8_t mod = (y & 7);
@@ -875,6 +889,8 @@ void Adafruit_SSD1306::drawFastVLineInternal(
             screen if display() has not been called.
 */
 boolean Adafruit_SSD1306::getPixel(int16_t x, int16_t y) {
+  if (!framebuffer) return 0;
+
   if((x >= 0) && (x < width()) && (y >= 0) && (y < height())) {
     // Pixel is in-bounds. Rotate coordinates if needed.
     switch(getRotation()) {
@@ -891,7 +907,7 @@ boolean Adafruit_SSD1306::getPixel(int16_t x, int16_t y) {
       y = HEIGHT - y - 1;
       break;
     }
-    return (buffer[x + (y / 8) * WIDTH] & (1 << (y & 7)));
+    return (framebuffer[x + (y / 8) * WIDTH] & (1 << (y & 7)));
   }
   return false; // Pixel out of bounds
 }
@@ -902,7 +918,7 @@ boolean Adafruit_SSD1306::getPixel(int16_t x, int16_t y) {
             to full byte boundary if needed.
 */
 uint8_t *Adafruit_SSD1306::getBuffer(void) {
-  return xbuffer;
+  return framebuffer;
 }
 
 
@@ -916,11 +932,15 @@ uint8_t *Adafruit_SSD1306::getBuffer(void) {
             of graphics commands, as best needed by one's own application.
 */
 void Adafruit_SSD1306::display(void) {
+  if (!framebuffer) return;
   int16_t col_start = 0;
   int16_t col_end = WIDTH - 1;
   if ((64 == WIDTH) && (48 == HEIGHT)) {    // for 64x48, we need to shift by 32 in both directions
     col_start += 32;
     col_end += 32;
+  } else if ((72 == WIDTH) && (40 == HEIGHT)) {    // for 72x40, we need to shift by 27 in both directions
+    col_start += 27;
+    col_end += 27;
   }
 
   TRANSACTION_START
@@ -943,7 +963,7 @@ void Adafruit_SSD1306::display(void) {
   yield();
 #endif
   uint16_t count = WIDTH * ((HEIGHT + 7) / 8);
-  uint8_t *ptr   = buffer;
+  uint8_t *ptr   = framebuffer;
   if(wire) { // I2C
     wire->beginTransmission(i2caddr);
     WIRE_WRITE((uint8_t)0x40);

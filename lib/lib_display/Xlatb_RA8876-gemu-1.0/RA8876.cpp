@@ -25,6 +25,7 @@ SOFTWARE.
 #include "RA8876.h"
 #include <limits.h>
 
+uint8_t initdone;
 /* TODO
 
 font 0 x and y size with line,col cmd
@@ -36,6 +37,9 @@ fast picture write
 //void SHOW_STAGE(uint8_t stage) {
 //  Serial.printf(">%d,\n", stage);
 //
+
+enum LoggingLevels {LOG_LEVEL_NONE, LOG_LEVEL_ERROR, LOG_LEVEL_INFO, LOG_LEVEL_DEBUG, LOG_LEVEL_DEBUG_MORE};
+extern void AddLog(uint32_t loglevel, PGM_P formatP, ...);
 
 const uint16_t RA8876_colors[]={RA8876_BLACK,RA8876_WHITE,RA8876_RED,RA8876_GREEN,RA8876_BLUE,RA8876_CYAN,RA8876_MAGENTA,\
   RA8876_YELLOW,RA8876_NAVY,RA8876_DARKGREEN,RA8876_DARKCYAN,RA8876_MAROON,RA8876_PURPLE,RA8876_OLIVE,\
@@ -123,6 +127,9 @@ uint8_t RA8876::readStatus(void) {
 void RA8876::writeReg(uint8_t reg, uint8_t x) {
   writeCmd(reg);
   writeData(x);
+  if (!initdone) {
+  //  Serial.printf("%02x, %02x\n", reg, x);
+  }
 }
 
 // Like writeReg(), but does two successive register writes of a 16-bit value, low byte first.
@@ -187,6 +194,10 @@ void RA8876::DisplayOnff(int8_t on) {
   if (on) {
     dim(dimmer);
   }
+}
+
+void RA8876::dim10(uint8_t contrast, uint16_t contrast_gamma) {
+  dim(contrast / 16); 
 }
 
 // 0-15
@@ -481,6 +492,9 @@ void RA8876::DisplayInit(int8_t p,int8_t size,int8_t rot,int8_t font) {
 }
 
 bool RA8876::initDisplay() {
+
+  lvgl_param.fluslines = 10;
+
   SPI.beginTransaction(m_spiSettings);
 
   // Set chip config register
@@ -590,7 +604,7 @@ bool RA8876::initDisplay() {
   // TODO: Track backlight pin and turn on backlight
 
   SPI.endTransaction();
-
+initdone = 1;
   return true;
 }
 
@@ -932,29 +946,44 @@ void RA8876::setAddrWindow(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
   SPI.endTransaction();
 }
 
-void RA8876::pushColors(uint16_t *data, uint16_t len, boolean first) {
-  SPI.beginTransaction(m_spiSettings);
-  //RA8876_CS_LOW
-  while (len--) {
+// pixel color is swapped in contrast to other controllers
+void RA8876::pushColors(uint16_t *data, uint16_t len, boolean not_swapped) {
 
-    uint16_t color=*data++;
-
-#if 0
-    SPI.transfer(RA8876_DATA_WRITE);
-    SPI.transfer(color&0xff);
-    SPI.transfer(RA8876_DATA_WRITE);
-    SPI.transfer(color>>8);
-
-#else
-
-    //waitWriteFifo();
-    writeData(color&0xff);
-    //waitWriteFifo();
-    writeData(color>>8);
+  if (not_swapped == false) {
+    // coming from LVGL
+#ifdef ESP32
+    SPI.beginTransaction(m_spiSettings);
+    RA8876_CS_LOW
+    SPI.write(RA8876_DATA_WRITE);
+    if (lvgl_param.use_dma) {
+      // will need swapping !
+      pushPixelsDMA(data, len);
+    } else {
+      SPI.writePixels(data, len * 2);
+    }
+    RA8876_CS_HIGH
+    SPI.endTransaction();
 #endif
+  } else {
+    // coming from displaytext
+    SPI.beginTransaction(m_spiSettings);
+    RA8876_CS_LOW
+    SPI.transfer(RA8876_DATA_WRITE);
+
+#ifdef ESP32
+    SPI.writeBytes((uint8_t*)data, len * 2);
+#endif
+
+#ifdef ESP8266
+    while (len--) {
+      uint16_t color = *data++;
+      SPI.write(color&0xff);
+      SPI.write(color>>8);
+    }
+#endif
+    RA8876_CS_HIGH
+    SPI.endTransaction();
   }
-  //RA8876_CS_HIGH
-  SPI.endTransaction();
 }
 
 void RA8876::drawPixel(int16_t x, int16_t y, uint16_t color) {
@@ -1272,6 +1301,102 @@ void RA8876::setDrawMode(uint8_t mode) {
   setDrawMode_reg(mode);
 }
 
+//#define RA_FT5206_VENDID           0x11
+#define RA_FT5206_VENDID           0x79
+#define RA_FT5206U_CHIPID          0x64
+#define RA_FT5316_CHIPID           0x0a
+#define RA_FT5206_VENDID_REG       (0xA8)
+#define RA_FT5206_CHIPID_REG       (0xA3)
+#define RA_FT5206_TOUCHES_REG      (0x02)
+#define RA_FT5206_MODE_REG         (0x00)
+#define RA_FT5206_address 0x38
+
+int RA8876::_readByte(uint8_t reg, uint8_t nbytes, uint8_t *data) {
+  _i2cPort->beginTransmission(RA_FT5206_address);
+  _i2cPort->write(reg);
+  _i2cPort->endTransmission();
+  _i2cPort->requestFrom(RA_FT5206_address, (size_t)nbytes);
+  uint8_t index = 0;
+  while (_i2cPort->available()) {
+    data[index++] = _i2cPort->read();
+  }
+  return 0;
+}
+
+int RA8876::_writeByte(uint8_t reg, uint8_t nbytes, uint8_t *data) {
+  _i2cPort->beginTransmission(RA_FT5206_address);
+  _i2cPort->write(reg);
+  for (uint8_t i = 0; i < nbytes; i++) {
+    _i2cPort->write(data[i]);
+  }
+  _i2cPort->endTransmission();
+  return 0;
+}
+
+bool RA8876::utouch_Init(char **name) {
+  strcpy(ut_name, "FT5316");
+  *name = ut_name;
+
+  _i2cPort = &Wire;
+
+  uint8_t val; 
+  _readByte(RA_FT5206_VENDID_REG, 1, &val);
+  //AddLog(LOG_LEVEL_INFO, PSTR("UTDBG %02x"), val);
+
+  if (val != RA_FT5206_VENDID) {
+    return false;
+  }
+  
+  _readByte(RA_FT5206_CHIPID_REG, 1, &val);
+  //AddLog(LOG_LEVEL_INFO, PSTR("UTDBG %02x"), val);
+
+  if (val != RA_FT5316_CHIPID) {
+    return false;
+  }
+
+  return true;
+}
+
+uint16_t RA8876::touched(void) {
+  uint8_t data[16];
+
+  uint8_t  val = 0;
+  _readByte(RA_FT5206_MODE_REG, 1, &val);
+  if (val) {
+    val = 0;
+    _writeByte(RA_FT5206_MODE_REG, 1, &val);
+  }
+
+  _readByte(RA_FT5206_MODE_REG, 16, data);
+
+  if (data[2]) {
+    ut_x = data[3] << 8;
+    ut_x |= data[4];
+    ut_y = data[5] << 8;
+    ut_y |= data[6];
+    ut_x &= 0xfff;
+    ut_y &= 0xfff;
+  }
+  return data[2];
+}
+
+int16_t RA8876::getPoint_x() {
+  return ut_x;
+}
+
+int16_t RA8876::getPoint_y() {
+  return ut_y;
+}
+
+void RA8876::TS_RotConvert(int16_t *x, int16_t *y) {
+int16_t temp;
+  *x = *x * width() / 800;
+  *y = *y * height() / 480;
+
+  *x = width() - *x;
+  *y = height() - *y;
+}
+
 void RA8876::setDrawMode_reg(uint8_t mode)  {
   SPI.beginTransaction(m_spiSettings);
   uint8_t ccr1 = readReg(RA8876_REG_CCR1);
@@ -1453,3 +1578,128 @@ void RA8876::FastString(uint16_t x,uint16_t y,uint16_t tcolor, const char* str) 
   setTextColor(tcolor,textbgcolor);
   xwrite((uint8_t*)str,strlen(str));
 }
+
+// ESP 32 DMA section , derived from TFT_eSPI
+#ifdef ESP32
+
+/***************************************************************************************
+** Function name:           initDMA
+** Description:             Initialise the DMA engine - returns true if init OK
+***************************************************************************************/
+bool RA8876::initDMA()
+{
+  if (DMA_Enabled) return false;
+
+  esp_err_t ret;
+  spi_bus_config_t buscfg = {
+    .mosi_io_num = _mosi,
+    .miso_io_num = _miso,
+    .sclk_io_num = _sclk,
+    .quadwp_io_num = -1,
+    .quadhd_io_num = -1,
+    .max_transfer_sz = width() * height() * 2 + 8, // TFT screen size
+    .flags = 0,
+    .intr_flags = 0
+  };
+
+
+  spi_device_interface_config_t devcfg = {
+    .command_bits = 0,
+    .address_bits = 0,
+    .dummy_bits = 0,
+    .mode = SPI_MODE3,
+    .duty_cycle_pos = 0,
+    .cs_ena_pretrans = 0,
+    .cs_ena_posttrans = 0,
+    .clock_speed_hz = RA8876_SPI_SPEED,
+    .input_delay_ns = 0,
+    .spics_io_num = -1,
+    .flags = SPI_DEVICE_NO_DUMMY, //0,
+    .queue_size = 1,
+    .pre_cb = 0, //dc_callback, //Callback to handle D/C line
+    .post_cb = 0
+  };
+  ret = spi_bus_initialize(spi_host, &buscfg, 1);
+  ESP_ERROR_CHECK(ret);
+  ret = spi_bus_add_device(spi_host, &devcfg, &dmaHAL);
+  ESP_ERROR_CHECK(ret);
+
+  DMA_Enabled = true;
+  spiBusyCheck = 0;
+  return true;
+}
+
+/***************************************************************************************
+** Function name:           deInitDMA
+** Description:             Disconnect the DMA engine from SPI
+***************************************************************************************/
+void RA8876::deInitDMA(void) {
+  if (!DMA_Enabled) return;
+  spi_bus_remove_device(dmaHAL);
+  spi_bus_free(spi_host);
+  DMA_Enabled = false;
+}
+
+/***************************************************************************************
+** Function name:           dmaBusy
+** Description:             Check if DMA is busy
+***************************************************************************************/
+bool RA8876::dmaBusy(void) {
+  if (!DMA_Enabled || !spiBusyCheck) return false;
+
+  spi_transaction_t *rtrans;
+  esp_err_t ret;
+  uint8_t checks = spiBusyCheck;
+  for (int i = 0; i < checks; ++i) {
+    ret = spi_device_get_trans_result(dmaHAL, &rtrans, 0);
+    if (ret == ESP_OK) spiBusyCheck--;
+  }
+
+  //Serial.print("spiBusyCheck=");Serial.println(spiBusyCheck);
+  if (spiBusyCheck == 0) return false;
+  return true;
+}
+
+
+/***************************************************************************************
+** Function name:           dmaWait
+** Description:             Wait until DMA is over (blocking!)
+***************************************************************************************/
+void RA8876::dmaWait(void) {
+  if (!DMA_Enabled || !spiBusyCheck) return;
+  spi_transaction_t *rtrans;
+  esp_err_t ret;
+  for (int i = 0; i < spiBusyCheck; ++i) {
+    ret = spi_device_get_trans_result(dmaHAL, &rtrans, portMAX_DELAY);
+    assert(ret == ESP_OK);
+  }
+  spiBusyCheck = 0;
+}
+
+
+/***************************************************************************************
+** Function name:           pushPixelsDMA
+** Description:             Push pixels to TFT (len must be less than 32767)
+***************************************************************************************/
+// This will byte swap the original image if setSwapBytes(true) was called by sketch.
+void RA8876::pushPixelsDMA(uint16_t* image, uint32_t len) {
+
+  if ((len == 0) || (!DMA_Enabled)) return;
+
+  dmaWait();
+
+  esp_err_t ret;
+
+  memset(&trans, 0, sizeof(spi_transaction_t));
+
+  trans.user = (void *)1;
+  trans.tx_buffer = image;  //finally send the line data
+  trans.length = len * 16;        //Data length, in bits
+  trans.flags = 0;                //SPI_TRANS_USE_TXDATA flag
+
+  ret = spi_device_queue_trans(dmaHAL, &trans, portMAX_DELAY);
+  assert(ret == ESP_OK);
+
+  spiBusyCheck++;
+}
+#endif // ESP32
