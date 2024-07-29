@@ -1173,7 +1173,7 @@ void MqttReconnect(void) {
   bool allow_all_fingerprints = false;
   bool learn_fingerprint1 = false;
   bool learn_fingerprint2 = false;
-  if (Mqtt.mqtt_tls && Settings->flag5.tls_use_fingerprint) {
+  if (Mqtt.mqtt_tls){// && Settings->flag5.tls_use_fingerprint) {
     allow_all_fingerprints = false;
     learn_fingerprint1 = is_fingerprint_mono_value(Settings->mqtt_fingerprint[0], 0x00);
     learn_fingerprint2 = is_fingerprint_mono_value(Settings->mqtt_fingerprint[1], 0x00);
@@ -1182,6 +1182,7 @@ void MqttReconnect(void) {
     allow_all_fingerprints |= learn_fingerprint1;
     allow_all_fingerprints |= learn_fingerprint2;
     tlsClient->setPubKeyFingerprint(Settings->mqtt_fingerprint[0], Settings->mqtt_fingerprint[1], allow_all_fingerprints);
+    tlsClient->setPubKeyFingerprint(Settings->mqtt_fingerprint[0], Settings->mqtt_fingerprint[1], true);
   }
 #else   // No USE_MQTT_TLS
   MqttClient.setClient(EspClient);
